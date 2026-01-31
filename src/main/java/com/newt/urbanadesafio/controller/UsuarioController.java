@@ -6,6 +6,8 @@ import com.newt.urbanadesafio.service.UsuarioService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import jakarta.validation.Valid;
+
 
 import java.util.List;
 
@@ -33,14 +35,14 @@ public class UsuarioController {
 
     // Criar novo usuário
     @PostMapping
-    public ResponseEntity<UsuarioDTO> criar(@RequestBody UsuarioCreateDTO dto) {
+    public ResponseEntity<UsuarioDTO> criar(@Valid @RequestBody UsuarioCreateDTO dto) {
         UsuarioDTO novoUsuario = usuarioService.criar(dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(novoUsuario);
     }
 
     // Atualizar usuário
     @PutMapping("/{id}")
-    public ResponseEntity<UsuarioDTO> atualizar(@PathVariable Long id, @RequestBody UsuarioCreateDTO dto) {
+    public ResponseEntity<UsuarioDTO> atualizar(@PathVariable Long id, @Valid @RequestBody UsuarioCreateDTO dto) {
         return ResponseEntity.ok(usuarioService.atualizar(id, dto));
     }
 

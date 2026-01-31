@@ -6,7 +6,7 @@ import com.newt.urbanadesafio.service.CartaoService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
+import jakarta.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -27,7 +27,7 @@ public class CartaoController {
 
     // Criar cartão
     @PostMapping
-    public ResponseEntity<CartaoDTO> criar(@RequestBody CartaoCreateDTO dto) {
+    public ResponseEntity<CartaoDTO> criar(@Valid @RequestBody CartaoCreateDTO dto) {
         CartaoDTO novoCartao = cartaoService.criar(dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(novoCartao);
     }

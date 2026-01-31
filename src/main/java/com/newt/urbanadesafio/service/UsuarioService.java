@@ -35,7 +35,6 @@ public class UsuarioService {
 
     @Transactional
     public UsuarioDTO criar(UsuarioCreateDTO dto) {
-        // Futuro: Verificar se email já existe
         Usuario usuario = new Usuario();
         usuario.setNome(dto.getNome());
         usuario.setEmail(dto.getEmail());
@@ -43,5 +42,29 @@ public class UsuarioService {
 
         usuario = usuarioRepository.save(usuario);
         return new UsuarioDTO(usuario);
+    }
+
+    @Transactional
+    public UsuarioDTO atualizar(Long id, UsuarioCreateDTO dto) {
+        Usuario usuario = usuarioRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Usuário não encontrado!"));
+
+        usuario.setNome(dto.getNome());
+        usuario.setEmail(dto.getEmail());
+
+        // Só troca a senha se o usuário mandou uma nova
+        if (dto.getSenha() != null && !dto.getSenha().isEmpty()) {
+            usuario.setSenha(dto.getSenha());
+        }
+
+        return new UsuarioDTO(usuarioRepository.save(usuario));
+    }
+
+    @Transactional
+    public void deletar(Long id) {
+        if (!usuarioRepository.existsById(id)) {
+            throw new RuntimeException("Usuário não encontrado!");
+        }
+        usuarioRepository.deleteById(id);
     }
 }

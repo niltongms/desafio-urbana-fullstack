@@ -31,7 +31,7 @@ public class CartaoService {
 
     @Transactional
     public CartaoDTO criar(CartaoCreateDTO dto) {
-        // Regra: Não pode criar cartão pra um usuário que não existe
+        // Não pode criar cartão pra um usuário que não existe
         Usuario dono = usuarioRepository.findById(dto.getUsuarioId())
                 .orElseThrow(() -> new RuntimeException("Usuário dono do cartão não encontrado!"));
 
@@ -39,18 +39,26 @@ public class CartaoService {
         cartao.setNome(dto.getNome());
         cartao.setNumeroCartao(dto.getNumeroCartao());
         cartao.setTipoCartao(dto.getTipoCartao());
-        cartao.setStatus(true); // Regra: Cartão já nasce Ativo
+        cartao.setStatus(true); // Cartão já nasce Ativo
         cartao.setUsuario(dono);
 
         return new CartaoDTO(cartaoRepository.save(cartao));
     }
 
-    // Regra Extra: Ativar/Desativar cartão
+    // Ativar/Desativar cartão
     @Transactional
     public CartaoDTO alterarStatus(Long id, boolean ativo) {
         Cartao cartao = cartaoRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Cartão não encontrado!"));
         cartao.setStatus(ativo);
         return new CartaoDTO(cartaoRepository.save(cartao));
+    }
+
+    @Transactional
+    public void deletar(Long id) {
+        if (!cartaoRepository.existsById(id)) {
+            throw new RuntimeException("Cartão não encontrado!");
+        }
+        cartaoRepository.deleteById(id);
     }
 }

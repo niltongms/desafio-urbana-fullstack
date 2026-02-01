@@ -41,7 +41,7 @@ class CartaoServiceTest {
         // Dados de entrada
         CartaoCreateDTO dto = new CartaoCreateDTO();
         dto.setUsuarioId(usuarioId);
-        dto.setNumeroCartao(12345L);
+        dto.setNumeroCartao("12345");
         dto.setNome("Cartão Estudante");
         dto.setTipoCartao(TipoCartao.ESTUDANTE);
 
@@ -52,7 +52,7 @@ class CartaoServiceTest {
         // Cartão que o banco vai "salvar"
         Cartao cartaoSalvo = new Cartao();
         cartaoSalvo.setId(10L);
-        cartaoSalvo.setNumeroCartao(12345L);
+        cartaoSalvo.setNumeroCartao("12345");
         cartaoSalvo.setUsuario(usuario);
         cartaoSalvo.setTipoCartao(TipoCartao.ESTUDANTE);
         cartaoSalvo.setStatus(true);

@@ -2,13 +2,16 @@ package com.newt.urbanadesafio.dto;
 
 import com.newt.urbanadesafio.entity.Cartao;
 import com.newt.urbanadesafio.enums.TipoCartao;
+import java.math.BigDecimal;
 
 public class CartaoDTO {
+
     private Long id;
-    private Long numeroCartao;
+    private String numeroCartao;
     private String nome;
     private Boolean status;
     private TipoCartao tipoCartao;
+    private BigDecimal saldo;
     private Long usuarioId;
 
     public CartaoDTO() {}
@@ -19,7 +22,8 @@ public class CartaoDTO {
         this.nome = cartao.getNome();
         this.status = cartao.getStatus();
         this.tipoCartao = cartao.getTipoCartao();
-        // Pega só o ID do dono
+        this.saldo = cartao.getSaldo();
+
         if (cartao.getUsuario() != null) {
             this.usuarioId = cartao.getUsuario().getId();
         }
@@ -28,14 +32,22 @@ public class CartaoDTO {
     // Getters e Setters
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
-    public Long getNumeroCartao() { return numeroCartao; }
-    public void setNumeroCartao(Long numeroCartao) { this.numeroCartao = numeroCartao; }
+
+    public String getNumeroCartao() { return numeroCartao; }
+    public void setNumeroCartao(String numeroCartao) { this.numeroCartao = numeroCartao; }
+
     public String getNome() { return nome; }
     public void setNome(String nome) { this.nome = nome; }
+
     public Boolean getStatus() { return status; }
     public void setStatus(Boolean status) { this.status = status; }
+
     public TipoCartao getTipoCartao() { return tipoCartao; }
     public void setTipoCartao(TipoCartao tipoCartao) { this.tipoCartao = tipoCartao; }
+
+    public BigDecimal getSaldo() { return saldo; }
+    public void setSaldo(BigDecimal saldo) { this.saldo = saldo; }
+
     public Long getUsuarioId() { return usuarioId; }
     public void setUsuarioId(Long usuarioId) { this.usuarioId = usuarioId; }
 }

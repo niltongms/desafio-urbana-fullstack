@@ -11,6 +11,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/cartoes")
+@CrossOrigin(origins = "*")
 public class CartaoController {
 
     private final CartaoService cartaoService;
@@ -19,10 +20,16 @@ public class CartaoController {
         this.cartaoService = cartaoService;
     }
 
-    // Listar todos os cartões
+    // Listar todos os cartões (Admin)
     @GetMapping
     public ResponseEntity<List<CartaoDTO>> listarTodos() {
         return ResponseEntity.ok(cartaoService.listarTodos());
+    }
+
+    // listar cartões de um usuário
+    @GetMapping("/usuario/{id}")
+    public ResponseEntity<List<CartaoDTO>> listarDoUsuario(@PathVariable Long id) {
+        return ResponseEntity.ok(cartaoService.listarPorUsuario(id));
     }
 
     // Criar cartão
@@ -32,7 +39,7 @@ public class CartaoController {
         return ResponseEntity.status(HttpStatus.CREATED).body(novoCartao);
     }
 
-    //  Ativar/Desativar cartão
+    // Ativar/Desativar cartão
     @PatchMapping("/{id}/status")
     public ResponseEntity<CartaoDTO> alterarStatus(@PathVariable Long id, @RequestParam boolean ativo) {
         return ResponseEntity.ok(cartaoService.alterarStatus(id, ativo));

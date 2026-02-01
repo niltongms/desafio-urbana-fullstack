@@ -34,13 +34,23 @@ public class UsuarioService {
     }
 
     @Transactional
-    public UsuarioDTO criar(UsuarioCreateDTO dto) {
+    public UsuarioDTO criar(UsuarioCreateDTO dto) { // Recebe o CreateDTO
+        // Validação
+        if (usuarioRepository.findByEmail(dto.getEmail()).isPresent()) {
+            throw new RuntimeException("Já existe um usuário com este e-mail.");
+        }
+
         Usuario usuario = new Usuario();
         usuario.setNome(dto.getNome());
         usuario.setEmail(dto.getEmail());
         usuario.setSenha(dto.getSenha());
+        usuario.setCpf(dto.getCpf());
+        usuario.setDataNascimento(dto.getDataNascimento());
+        usuario.setPerfil(dto.getPerfil());
 
         usuario = usuarioRepository.save(usuario);
+
+        // Retorna o DTO padrão (com ID e sem senha exposta)
         return new UsuarioDTO(usuario);
     }
 

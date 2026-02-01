@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Random;
 import java.util.stream.Collectors;
 
 @Service
@@ -45,12 +46,15 @@ public class CartaoService {
 
         Cartao cartao = new Cartao();
         cartao.setNome(dto.getNome());
-        cartao.setNumeroCartao(dto.getNumeroCartao());
+
+        // Geração Automática do Número
+        String numeroGerado = gerarNumeroUnico(dto.getTipoCartao());
+        cartao.setNumeroCartao(numeroGerado);
+
         cartao.setTipoCartao(dto.getTipoCartao());
         cartao.setStatus(true);
         cartao.setUsuario(dono);
 
-        // Lógica de Saldo: Se vier nulo, define como ZERO
         if (dto.getSaldoInicial() != null) {
             cartao.setSaldo(dto.getSaldoInicial());
         } else {
@@ -74,5 +78,27 @@ public class CartaoService {
             throw new RuntimeException("Cartão não encontrado!");
         }
         cartaoRepository.deleteById(id);
+    }
+
+
+    private String gerarNumeroUnico(com.newt.urbanadesafio.enums.TipoCartao tipo) {
+        String prefixo = switch (tipo) {
+            case COMUM -> "10";
+            case ESTUDANTE -> "20";
+            case TRABALHADOR -> "30";
+        };
+
+        Random random = new Random();
+        String novoNumero;
+        do {
+            int aleatorio = 100000 + random.nextInt(900000);
+            novoNumero = prefixo + aleatorio;
+        } while (existeNumeroNoBanco(novoNumero));
+
+        return novoNumero;
+    }
+
+    private boolean existeNumeroNoBanco(String numero) {
+        return cartaoRepository.existsByNumeroCartao(numero);
     }
 }

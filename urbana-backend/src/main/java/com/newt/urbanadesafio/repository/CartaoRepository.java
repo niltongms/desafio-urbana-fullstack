@@ -7,6 +7,10 @@ import java.util.List;
 
 @Repository
 public interface CartaoRepository extends JpaRepository<Cartao, Long> {
+
     // Busca cartões de um usuário específico
     List<Cartao> findByUsuarioId(Long usuarioId);
+
+    // Verifica se já existe um cartão com este número
+    boolean existsByNumeroCartao(String numeroCartao);
 }

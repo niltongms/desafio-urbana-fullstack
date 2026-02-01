@@ -39,6 +39,9 @@ public class UsuarioService {
         if (usuarioRepository.findByEmail(dto.getEmail()).isPresent()) {
             throw new RuntimeException("Já existe um usuário com este e-mail.");
         }
+        if (usuarioRepository.existsByCpf(dto.getCpf())) {
+            throw new RuntimeException("Já existe um usuário cadastrado com este CPF!");
+        }
 
         Usuario usuario = new Usuario();
         usuario.setNome(dto.getNome());

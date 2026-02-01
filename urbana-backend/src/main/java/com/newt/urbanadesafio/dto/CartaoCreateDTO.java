@@ -2,13 +2,10 @@ package com.newt.urbanadesafio.dto;
 
 import com.newt.urbanadesafio.enums.TipoCartao;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
 import java.math.BigDecimal;
 
 public class CartaoCreateDTO {
 
-    @NotNull(message = "O número do cartão é obrigatório")
-    @Pattern(regexp = "\\d+", message = "O número do cartão deve conter apenas dígitos")
     private String numeroCartao;
 
     @NotNull(message = "O nome do cartão é obrigatório")
@@ -22,7 +19,7 @@ public class CartaoCreateDTO {
     @NotNull(message = "O ID do usuário é obrigatório")
     private Long usuarioId;
 
-
+    // Getters e Setters
     public String getNumeroCartao() { return numeroCartao; }
     public void setNumeroCartao(String numeroCartao) { this.numeroCartao = numeroCartao; }
 

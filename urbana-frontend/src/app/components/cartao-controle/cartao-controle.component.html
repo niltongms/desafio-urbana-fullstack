@@ -16,26 +16,6 @@
           />
         </div>
 
-        <div class="col-md-6">
-          <label class="form-label small text-muted mb-1">Número (Chip)</label>
-          <input
-            type="text"
-            class="form-control form-control-sm"
-            formControlName="numeroCartao"
-            placeholder="Apenas números"
-          />
-          <div
-            *ngIf="
-              formCartao.get('numeroCartao')?.invalid &&
-              formCartao.get('numeroCartao')?.touched
-            "
-            class="text-danger"
-            style="font-size: 0.75rem"
-          >
-            Apenas números são permitidos.
-          </div>
-        </div>
-
         <div class="col-md-4">
           <label class="form-label small text-muted mb-1">Tipo</label>
           <select

@@ -27,7 +27,6 @@ export class CartaoControleComponent implements OnChanges {
   ) {
     this.formCartao = this.fb.group({
       nome: ['', [Validators.required]],
-      numeroCartao: ['', [Validators.required, Validators.pattern(/^\d+$/)]], 
       tipoCartao: ['COMUM', [Validators.required]],
       saldoInicial: [0]
     });
@@ -53,6 +52,7 @@ export class CartaoControleComponent implements OnChanges {
     if (this.formCartao.valid && this.usuarioId) {
       const dados = {
         ...this.formCartao.value,
+        numeroCartao: '',
         usuarioId: this.usuarioId
       };
 

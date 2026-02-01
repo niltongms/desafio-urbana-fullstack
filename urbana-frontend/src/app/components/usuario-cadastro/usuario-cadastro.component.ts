@@ -91,11 +91,19 @@ export class UsuarioCadastroComponent implements OnInit {
             this.toastr.success('Usuário cadastrado com sucesso!', 'Sucesso');
             this.router.navigate(['/usuarios']);
           },
-          error: (erro) => {
-            console.error(erro);
-            const msg = erro.error?.message || 'Erro ao realizar cadastro.';
-            this.toastr.error(msg, 'Erro');
+          error: (err) => {
+          console.error('Objeto de erro completo:', err);
+          
+          let mensagem = err.error?.erro || err.error?.message;
+          
+          if (!mensagem && typeof err.error === 'string') {
+            mensagem = err.error;
           }
+          
+          const msgFinal = mensagem || 'Erro desconhecido ao salvar usuário.';
+
+          this.toastr.error(msgFinal, 'Atenção');
+        }
         });
       }
 

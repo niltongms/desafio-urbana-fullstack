@@ -1,0 +1,99 @@
+<div class="cartao-container" *ngIf="usuarioId">
+  <div class="card p-3 mb-3 bg-light">
+    <h6 class="mb-3">Novo Cartão</h6>
+    <form
+      [formGroup]="formCartao"
+      (ngSubmit)="salvar()"
+      class="row g-2 align-items-end"
+    >
+      <div class="col-md-4">
+        <label>Nome do Cartão</label>
+        <input
+          type="text"
+          class="form-control form-control-sm"
+          formControlName="nome"
+          placeholder="Ex: Bilhete Único"
+        />
+      </div>
+
+      <div class="col-md-3">
+        <label>Número (Chip)</label>
+        <input
+          type="text"
+          class="form-control form-control-sm"
+          formControlName="numeroCartao"
+          placeholder="000123"
+        />
+      </div>
+
+      <div class="col-md-3">
+        <label>Tipo</label>
+        <select class="form-select form-select-sm" formControlName="tipoCartao">
+          <option value="COMUM">Comum</option>
+          <option value="ESTUDANTE">Estudante</option>
+          <option value="TRABALHADOR">Trabalhador</option>
+        </select>
+      </div>
+
+      <div class="col-md-2">
+        <button
+          type="submit"
+          class="btn btn-primary btn-sm w-100"
+          [disabled]="formCartao.invalid"
+        >
+          <i class="bi bi-plus-lg"></i> Adicionar
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <div class="table-responsive">
+    <table class="table table-sm table-hover border">
+      <thead class="table-light">
+        <tr>
+          <th>Número</th>
+          <th>Nome</th>
+          <th>Tipo</th>
+          <th>Saldo</th>
+          <th class="text-end">Ações</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let c of cartoes">
+          <td>
+            <code>{{ c.numeroCartao }}</code>
+          </td>
+          <td>{{ c.nome }}</td>
+          <td>
+            <span
+              class="badge"
+              [ngClass]="{
+                'text-bg-success': c.tipoCartao === 'TRABALHADOR',
+                'text-bg-info': c.tipoCartao === 'ESTUDANTE',
+                'text-bg-secondary': c.tipoCartao === 'COMUM',
+              }"
+            >
+              {{ c.tipoCartao }}
+            </span>
+          </td>
+          <td class="fw-bold text-success">
+            {{ c.saldo | currency: "BRL" }}
+          </td>
+          <td class="text-end">
+            <button
+              class="btn btn-outline-danger btn-sm border-0"
+              (click)="excluir(c.id)"
+            >
+              <i class="bi bi-trash"></i>
+            </button>
+          </td>
+        </tr>
+        <tr *ngIf="cartoes.length === 0">
+          <td colspan="5" class="text-center text-muted py-3">
+            Nenhum cartão vinculado a este usuário.
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

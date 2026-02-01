@@ -29,7 +29,16 @@
             <td>{{ usuario.nome }}</td>
             <td>{{ usuario.email }}</td>
             <td>{{ usuario.cpf | cpfMask }}</td>
+
             <td class="text-end">
+              <button
+                class="btn btn-sm btn-outline-info me-2"
+                title="Gerenciar Cartões"
+                (click)="usuario.id && abrirCartoes(usuario.id)"
+              >
+                <i class="bi bi-credit-card-2-front"></i>
+              </button>
+
               <button
                 class="btn btn-sm btn-outline-primary me-2"
                 [routerLink]="['/usuarios/editar', usuario.id]"
@@ -37,6 +46,7 @@
               >
                 <i class="bi bi-pencil"></i>
               </button>
+
               <button
                 class="btn btn-sm btn-outline-danger"
                 title="Excluir"
@@ -48,6 +58,24 @@
           </tr>
         </tbody>
       </table>
+    </div>
+  </div>
+</div>
+
+<div
+  class="modal-overlay"
+  *ngIf="usuarioSelecionadoId"
+  (click)="fecharCartoes()"
+>
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h5 class="m-0">Gestão de Cartões</h5>
+      <button class="btn-close" (click)="fecharCartoes()"></button>
+    </div>
+    <div class="modal-body">
+      <app-cartao-controle
+        [usuarioId]="usuarioSelecionadoId"
+      ></app-cartao-controle>
     </div>
   </div>
 </div>

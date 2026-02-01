@@ -6,6 +6,7 @@ import { Usuario } from '../../models/usuario.interface';
 import { CpfMaskPipe } from '../../pipes/cpf-mask.pipe';
 import { ToastrService } from 'ngx-toastr';
 import Swal from 'sweetalert2';
+import { CartaoControleComponent } from '../cartao-controle/cartao-controle.component';
 
 @Component({
   selector: 'app-usuario-lista',
@@ -13,13 +14,15 @@ import Swal from 'sweetalert2';
   imports: [
     CommonModule,
     RouterLink,
-    CpfMaskPipe
+    CpfMaskPipe,
+    CartaoControleComponent
   ],
   templateUrl: './usuario-lista.component.html',
   styleUrl: './usuario-lista.component.scss'
 })
 export class UsuarioListaComponent implements OnInit {
   usuarios: Usuario[] = [];
+  usuarioSelecionadoId: number | null = null;
 
   constructor(
     private usuarioService: UsuarioService,
@@ -33,7 +36,8 @@ export class UsuarioListaComponent implements OnInit {
   carregarUsuarios() {
     this.usuarioService.listarTodos().subscribe({
       next: (dados) => {
-        this.usuarios = dados;},
+        this.usuarios = dados;
+      },
       error: (erro) => {
         console.error('Erro:', erro);
         this.toastr.error('Erro ao carregar lista de usuários.', 'Erro de Conexão');
@@ -41,12 +45,20 @@ export class UsuarioListaComponent implements OnInit {
     });
   }
 
+  abrirCartoes(id: number) {
+    this.usuarioSelecionadoId = id;
+  }
+
+  fecharCartoes() {
+    this.usuarioSelecionadoId = null;
+  }
+
   excluirUsuario(id: number | undefined, nome: string) {
     if (!id) return;
 
     Swal.fire({
       title: 'Tem certeza?',
-      text: `Deseja realmente excluir o usuário "${nome}"?`,
+      text: `Excluir o usuário "${nome}" apagará também seus cartões vinculados!`,
       icon: 'warning',
       showCancelButton: true,
       confirmButtonColor: '#d33', 

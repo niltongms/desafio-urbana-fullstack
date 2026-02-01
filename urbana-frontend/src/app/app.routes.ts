@@ -6,5 +6,6 @@ import { UsuarioCadastroComponent } from './components/usuario-cadastro/usuario-
 export const routes: Routes = [
   { path: '', redirectTo: 'usuarios', pathMatch: 'full' },
   { path: 'usuarios', component: UsuarioListaComponent },
-  { path: 'usuarios/novo', component: UsuarioCadastroComponent }
+  { path: 'usuarios/novo', component: UsuarioCadastroComponent },
+  { path: 'usuarios/editar/:id', component: UsuarioCadastroComponent }
 ];

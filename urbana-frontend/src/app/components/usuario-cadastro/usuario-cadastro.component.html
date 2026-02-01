@@ -1,5 +1,7 @@
 <div class="container mt-4">
-  <h2 class="fw-light text-secondary mb-4">Novo Usuário</h2>
+  <h2 class="fw-light text-secondary mb-4">
+    {{ isEdicao ? "Editar Usuário" : "Novo Usuário" }}
+  </h2>
 
   <div class="card-vem" style="max-width: 600px">
     <form [formGroup]="cadastroForm" (ngSubmit)="salvar()">
@@ -86,7 +88,7 @@
           class="btn btn-primary"
           [disabled]="cadastroForm.invalid"
         >
-          Salvar Usuário
+          {{ isEdicao ? "Atualizar Dados" : "Salvar Usuário" }}
         </button>
       </div>
     </form>

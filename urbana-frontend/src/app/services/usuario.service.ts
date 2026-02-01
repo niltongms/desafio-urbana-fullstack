@@ -7,17 +7,27 @@ import { Usuario } from '../models/usuario.interface';
   providedIn: 'root'
 })
 export class UsuarioService {
-  // Endereço do Backend Java
   private apiUrl = 'http://localhost:8080/usuarios'; 
 
   constructor(private http: HttpClient) { }
 
-  // Método que vai lá no Java buscar a lista
   listarTodos(): Observable<Usuario[]> {
     return this.http.get<Usuario[]>(this.apiUrl);
   }
 
-  cadastrar(usuario: Usuario): Observable<Usuario> {
+  buscarPorId(id: number): Observable<Usuario> {
+    return this.http.get<Usuario>(`${this.apiUrl}/${id}`);
+  }
+
+  cadastrar(usuario: any): Observable<Usuario> {
     return this.http.post<Usuario>(this.apiUrl, usuario);
+  }
+
+  atualizar(id: number, usuario: any): Observable<Usuario> {
+    return this.http.put<Usuario>(`${this.apiUrl}/${id}`, usuario);
+  }
+
+  excluir(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
 }

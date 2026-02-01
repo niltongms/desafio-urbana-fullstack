@@ -1,72 +1,99 @@
 <div class="cartao-container" *ngIf="usuarioId">
-  <div class="card p-3 mb-3 bg-light">
-    <h6 class="mb-3">Novo Cartão</h6>
-    <form
-      [formGroup]="formCartao"
-      (ngSubmit)="salvar()"
-      class="row g-2 align-items-end"
-    >
-      <div class="col-md-4">
-        <label>Nome do Cartão</label>
-        <input
-          type="text"
-          class="form-control form-control-sm"
-          formControlName="nome"
-          placeholder="Ex: Bilhete Único"
-        />
-      </div>
+  <div class="card p-3 mb-3 bg-light border-0 shadow-sm">
+    <h6 class="mb-3 fw-bold text-primary">
+      <i class="bi bi-plus-circle-dotted me-1"></i>Novo Cartão
+    </h6>
 
-      <div class="col-md-3">
-        <label>Número (Chip)</label>
-        <input
-          type="text"
-          class="form-control form-control-sm"
-          formControlName="numeroCartao"
-          placeholder="000123"
-        />
-      </div>
+    <form [formGroup]="formCartao" (ngSubmit)="salvar()">
+      <div class="row g-2">
+        <div class="col-md-6">
+          <label class="form-label small text-muted mb-1">Nome do Cartão</label>
+          <input
+            type="text"
+            class="form-control form-control-sm"
+            formControlName="nome"
+            placeholder="Ex: Bilhete Único"
+          />
+        </div>
 
-      <div class="col-md-3">
-        <label>Tipo</label>
-        <select class="form-select form-select-sm" formControlName="tipoCartao">
-          <option value="COMUM">Comum</option>
-          <option value="ESTUDANTE">Estudante</option>
-          <option value="TRABALHADOR">Trabalhador</option>
-        </select>
-      </div>
+        <div class="col-md-6">
+          <label class="form-label small text-muted mb-1">Número (Chip)</label>
+          <input
+            type="text"
+            class="form-control form-control-sm"
+            formControlName="numeroCartao"
+            placeholder="Apenas números"
+          />
+          <div
+            *ngIf="
+              formCartao.get('numeroCartao')?.invalid &&
+              formCartao.get('numeroCartao')?.touched
+            "
+            class="text-danger"
+            style="font-size: 0.75rem"
+          >
+            Apenas números são permitidos.
+          </div>
+        </div>
 
-      <div class="col-md-2">
-        <button
-          type="submit"
-          class="btn btn-primary btn-sm w-100"
-          [disabled]="formCartao.invalid"
-        >
-          <i class="bi bi-plus-lg"></i> Adicionar
-        </button>
+        <div class="col-md-4">
+          <label class="form-label small text-muted mb-1">Tipo</label>
+          <select
+            class="form-select form-select-sm"
+            formControlName="tipoCartao"
+          >
+            <option value="COMUM">Comum</option>
+            <option value="ESTUDANTE">Estudante</option>
+            <option value="TRABALHADOR">Trabalhador</option>
+          </select>
+        </div>
+
+        <div class="col-md-4">
+          <label class="form-label small text-muted mb-1"
+            >Saldo Inicial (R$)</label
+          >
+          <input
+            type="number"
+            class="form-control form-control-sm"
+            formControlName="saldoInicial"
+            placeholder="0,00"
+          />
+        </div>
+
+        <div class="col-md-4 d-flex align-items-end">
+          <button
+            type="submit"
+            class="btn btn-primary btn-sm w-100 fw-bold"
+            [disabled]="formCartao.invalid"
+          >
+            <i class="bi bi-plus-lg"></i> Adicionar
+          </button>
+        </div>
       </div>
     </form>
   </div>
 
-  <div class="table-responsive">
-    <table class="table table-sm table-hover border">
+  <div class="table-responsive border rounded bg-white">
+    <table class="table table-sm table-hover mb-0 align-middle">
       <thead class="table-light">
         <tr>
-          <th>Número</th>
+          <th class="ps-3">Número</th>
           <th>Nome</th>
           <th>Tipo</th>
           <th>Saldo</th>
-          <th class="text-end">Ações</th>
+          <th class="text-center">Status</th>
+          <th class="text-end pe-3">Ações</th>
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let c of cartoes">
-          <td>
-            <code>{{ c.numeroCartao }}</code>
+        <tr *ngFor="let c of cartoes" [class.opacity-50]="!c.status">
+          <td class="ps-3">
+            <code class="text-dark">{{ c.numeroCartao }}</code>
           </td>
           <td>{{ c.nome }}</td>
           <td>
             <span
-              class="badge"
+              class="badge rounded-pill"
               [ngClass]="{
                 'text-bg-success': c.tipoCartao === 'TRABALHADOR',
                 'text-bg-info': c.tipoCartao === 'ESTUDANTE',
@@ -76,20 +103,41 @@
               {{ c.tipoCartao }}
             </span>
           </td>
-          <td class="fw-bold text-success">
+
+          <td
+            class="fw-bold"
+            [ngClass]="c.status ? 'text-success' : 'text-muted'"
+          >
             {{ c.saldo | currency: "BRL" }}
           </td>
-          <td class="text-end">
+
+          <td class="text-center">
+            <div class="form-check form-switch d-inline-block">
+              <input
+                class="form-check-input cursor-pointer"
+                type="checkbox"
+                role="switch"
+                [checked]="c.status"
+                (change)="alternarStatus(c)"
+                title="Clique para Ativar/Desativar"
+              />
+            </div>
+          </td>
+
+          <td class="text-end pe-3">
             <button
-              class="btn btn-outline-danger btn-sm border-0"
+              class="btn btn-link text-danger p-0 border-0"
               (click)="excluir(c.id)"
+              title="Excluir Cartão"
             >
               <i class="bi bi-trash"></i>
             </button>
           </td>
         </tr>
+
         <tr *ngIf="cartoes.length === 0">
-          <td colspan="5" class="text-center text-muted py-3">
+          <td colspan="6" class="text-center text-muted py-4">
+            <i class="bi bi-wallet2 fs-4 d-block mb-2"></i>
             Nenhum cartão vinculado a este usuário.
           </td>
         </tr>

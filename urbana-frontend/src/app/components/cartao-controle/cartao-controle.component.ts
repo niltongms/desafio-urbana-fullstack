@@ -67,6 +67,29 @@ export class CartaoControleComponent implements OnChanges {
     }
   }
 
+  alternarStatus(cartao: Cartao) {
+    if (!cartao.id) return;
+
+    const novoStatus = !cartao.status;
+
+    this.cartaoService.alterarStatus(cartao.id, novoStatus).subscribe({
+      next: (cartaoAtualizado) => {
+        cartao.status = cartaoAtualizado.status; 
+        
+        if (novoStatus) {
+          this.toastr.success('Cartão ativado com sucesso!', 'Ativo');
+        } else {
+          this.toastr.warning('Cartão bloqueado temporariamente.', 'Inativo');
+        }
+      },
+      error: (err) => {
+        console.error(err);
+        this.toastr.error('Erro ao alterar status.');
+        cartao.status = !novoStatus; 
+      }
+    });
+  }
+
   excluir(id: number | undefined) {
     if (!id) return;
     
@@ -76,7 +99,9 @@ export class CartaoControleComponent implements OnChanges {
       icon: 'warning',
       showCancelButton: true,
       confirmButtonText: 'Sim, excluir',
-      confirmButtonColor: '#d33'
+      confirmButtonColor: '#d33',
+      cancelButtonText: 'Cancelar'
+      
     }).then((result) => {
       if (result.isConfirmed) {
         this.cartaoService.excluir(id).subscribe({

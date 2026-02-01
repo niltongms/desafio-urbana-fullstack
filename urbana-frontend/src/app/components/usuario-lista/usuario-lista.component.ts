@@ -1,12 +1,18 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { RouterLink } from '@angular/router';
 import { UsuarioService } from '../../services/usuario.service';
 import { Usuario } from '../../models/usuario.interface';
+import { CpfMaskPipe } from '../../pipes/cpf-mask.pipe';
 
 @Component({
   selector: 'app-usuario-lista',
   standalone: true,
-  imports: [CommonModule],
+  imports: [
+    CommonModule,
+    RouterLink,
+    CpfMaskPipe
+  ],
   templateUrl: './usuario-lista.component.html',
   styleUrl: './usuario-lista.component.scss'
 })

@@ -1,0 +1,13 @@
+services:
+  app:
+    build: .
+    container_name: urbana-front
+    ports:
+      - "4200:4200"
+    volumes:
+      - .:/app:Z
+      - /app/node_modules
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+    # ADICIONE ESTA LINHA ABAIXO (Substitui o CMD do Dockerfile):
+    command: sh -c "npm install && ng serve --host 0.0.0.0 --poll 2000"

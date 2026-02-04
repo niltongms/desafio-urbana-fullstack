@@ -23,7 +23,7 @@ public class Usuario {
     private String senha;
 
 
-    @Column(nullable = false, length = 11) // CPF geralmente tem 11 dígitos
+    @Column(nullable = false, length = 11)
     private String cpf;
 
     @Column(name = "data_nascimento")
@@ -68,7 +68,6 @@ public class Usuario {
 
     public String getPerfil() { return perfil; }
     public void setPerfil(String perfil) { this.perfil = perfil; }
-    // -------------------------------
 
     public List<Cartao> getCartoes() { return cartoes; }
     public void setCartoes(List<Cartao> cartoes) { this.cartoes = cartoes; }

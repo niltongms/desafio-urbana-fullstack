@@ -4,6 +4,7 @@ import com.newt.urbanadesafio.dto.UsuarioCreateDTO;
 import com.newt.urbanadesafio.dto.UsuarioDTO;
 import com.newt.urbanadesafio.entity.Usuario;
 import com.newt.urbanadesafio.repository.UsuarioRepository;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
@@ -13,16 +14,17 @@ import java.util.stream.Collectors;
 public class UsuarioService {
 
     private final UsuarioRepository usuarioRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    // Injeção via Construtor
-    public UsuarioService(UsuarioRepository usuarioRepository) {
+    public UsuarioService(UsuarioRepository usuarioRepository, PasswordEncoder passwordEncoder) {
         this.usuarioRepository = usuarioRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Transactional(readOnly = true)
     public List<UsuarioDTO> listarTodos() {
         return usuarioRepository.findAll().stream()
-                .map(UsuarioDTO::new) // Transforma Entidade em DTO
+                .map(UsuarioDTO::new)
                 .collect(Collectors.toList());
     }
 
@@ -34,8 +36,8 @@ public class UsuarioService {
     }
 
     @Transactional
-    public UsuarioDTO criar(UsuarioCreateDTO dto) { // Recebe o CreateDTO
-        // Validação
+    public UsuarioDTO criar(UsuarioCreateDTO dto) {
+        // Validações
         if (usuarioRepository.findByEmail(dto.getEmail()).isPresent()) {
             throw new RuntimeException("Já existe um usuário com este e-mail.");
         }
@@ -46,14 +48,25 @@ public class UsuarioService {
         Usuario usuario = new Usuario();
         usuario.setNome(dto.getNome());
         usuario.setEmail(dto.getEmail());
-        usuario.setSenha(dto.getSenha());
+
+
+        String senhaParaSalvar = dto.getSenha();
+
+        // Se o frontend não mandou senha (veio null ou vazia)
+        if (senhaParaSalvar == null || senhaParaSalvar.isEmpty()) {
+            senhaParaSalvar = "123456";
+        }
+
+        // Criptografa a senha
+        usuario.setSenha(passwordEncoder.encode(senhaParaSalvar));
+        // ------------------------------
+
         usuario.setCpf(dto.getCpf());
         usuario.setDataNascimento(dto.getDataNascimento());
         usuario.setPerfil(dto.getPerfil());
 
         usuario = usuarioRepository.save(usuario);
 
-        // Retorna o DTO padrão (com ID e sem senha exposta)
         return new UsuarioDTO(usuario);
     }
 
@@ -65,9 +78,8 @@ public class UsuarioService {
         usuario.setNome(dto.getNome());
         usuario.setEmail(dto.getEmail());
 
-        // Só troca a senha se o usuário mandou uma nova
         if (dto.getSenha() != null && !dto.getSenha().isEmpty()) {
-            usuario.setSenha(dto.getSenha());
+            usuario.setSenha(passwordEncoder.encode(dto.getSenha()));
         }
 
         return new UsuarioDTO(usuarioRepository.save(usuario));

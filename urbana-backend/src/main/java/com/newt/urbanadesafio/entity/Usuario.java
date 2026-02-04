@@ -22,7 +22,6 @@ public class Usuario {
     @Column(nullable = false)
     private String senha;
 
-
     @Column(nullable = false, length = 11)
     private String cpf;
 
@@ -31,7 +30,6 @@ public class Usuario {
 
     @Column(nullable = false)
     private String perfil; // COMUM, ESTUDANTE, TRABALHADOR
-    // -------------------------------
 
     @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Cartao> cartoes = new ArrayList<>();

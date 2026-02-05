@@ -17,7 +17,6 @@ public class TokenService {
     @Value("${api.security.token.secret}")
     private String secret;
 
-    // Método auxiliar para transformar a String em Chave Criptográfica
     private SecretKey getChave() {
         return Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
     }
@@ -25,8 +24,12 @@ public class TokenService {
     public String gerarToken(Usuario usuario) {
         return Jwts.builder()
                 .setSubject(usuario.getUsername())
+                .claim("id", usuario.getId())
+                .claim("perfil", usuario.getPerfil())
+                .claim("nome", usuario.getNome())
+                // ----------------------------------
                 .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 10)) // 10 horas
+                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 10))
                 .signWith(getChave())
                 .compact();
     }

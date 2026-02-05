@@ -1,0 +1,98 @@
+<div class="container py-5 position-relative">
+  <div class="position-absolute top-0 end-0 mt-4 me-3">
+    <button
+      (click)="authService.logout()"
+      class="btn btn-outline-danger btn-sm shadow-sm"
+    >
+      <i class="bi bi-box-arrow-right me-2"></i>Sair
+    </button>
+  </div>
+
+  <div class="d-flex justify-content-between align-items-center mb-4 mt-3">
+    <div>
+      <h2 class="fw-bold text-secondary">Meus Cartões</h2>
+      <p class="text-muted">
+        Gerencie seu saldo e acessos de transporte para o sistema Urbana.
+      </p>
+    </div>
+    <button class="btn btn-primary shadow-sm" (click)="solicitarNovoCartao()">
+      <i class="bi bi-plus-lg me-2"></i>Solicitar Novo Cartão
+    </button>
+  </div>
+
+  <div *ngIf="carregando" class="text-center py-5">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Carregando...</span>
+    </div>
+  </div>
+
+  <div
+    *ngIf="!carregando && cartoes.length === 0"
+    class="card border-0 shadow-sm text-center py-5"
+  >
+    <div class="card-body">
+      <div class="mb-3">
+        <i class="bi bi-wallet2 text-muted" style="font-size: 4rem"></i>
+      </div>
+      <h4 class="text-secondary">Você ainda não possui cartões</h4>
+      <p class="text-muted mb-4">
+        Solicite seu primeiro cartão para começar a usar o transporte.
+      </p>
+      <button class="btn btn-outline-primary" (click)="solicitarNovoCartao()">
+        Solicitar Agora
+      </button>
+    </div>
+  </div>
+
+  <div class="row g-4" *ngIf="!carregando && cartoes.length > 0">
+    <div class="col-md-6 col-lg-4" *ngFor="let cartao of cartoes">
+      <div class="card shadow-sm border-0 h-100 cartao-card">
+        <div
+          class="card-header border-0 text-white fw-bold d-flex justify-content-between align-items-center"
+          [ngClass]="{
+            'bg-primary': cartao.tipoCartao === 'COMUM',
+            'bg-warning text-dark': cartao.tipoCartao === 'ESTUDANTE',
+            'bg-dark': cartao.tipoCartao === 'TRABALHADOR',
+          }"
+        >
+          <span>{{ cartao.tipoCartao }}</span>
+          <i class="bi bi-wifi fs-5"></i>
+        </div>
+
+        <div class="card-body text-center">
+          <h6 class="text-uppercase text-muted small mb-1">Saldo Disponível</h6>
+          <h2 class="card-title fw-bold mb-3 text-secondary">
+            {{ cartao.saldo | currency: "BRL" }}
+          </h2>
+
+          <p class="text-muted small mb-4">
+            <i class="bi bi-hash"></i> {{ cartao.numeroCartao }}
+          </p>
+
+          <div class="d-grid gap-2">
+            <button
+              class="btn btn-success fw-bold py-2"
+              (click)="fazerRecarga(cartao)"
+              [disabled]="!cartao.status"
+            >
+              <i class="bi bi-cash-coin me-2"></i> Recarregar
+            </button>
+
+            <div
+              *ngIf="!cartao.status"
+              class="alert alert-danger py-1 px-2 mb-0 small mt-2"
+            >
+              <i class="bi bi-lock-fill me-1"></i> Este cartão está bloqueado.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="mt-5">
+    <a routerLink="/home" class="text-decoration-none text-muted">
+      <i class="bi bi-arrow-left me-1"></i> Voltar para o Início
+    </a>
+  </div>
+</div>

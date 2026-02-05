@@ -4,5 +4,5 @@ export interface Usuario {
   email: string;
   cpf: string;
   dataNascimento: string; 
-  perfil?: 'COMUM' | 'ESTUDANTE' | 'TRABALHADOR';
+  perfil?: 'ADMIN' |'COMUM' | 'ESTUDANTE' | 'TRABALHADOR';
 }

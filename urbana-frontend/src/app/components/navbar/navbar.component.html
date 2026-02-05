@@ -14,17 +14,50 @@
     </button>
 
     <div class="collapse navbar-collapse" id="navbarNav">
-      <ul class="navbar-nav ms-auto">
+      <ul class="navbar-nav ms-auto align-items-center">
         <li class="nav-item">
           <a class="nav-link" routerLink="/home" routerLinkActive="active">
             <i class="bi bi-house-door me-1"></i> Início
           </a>
         </li>
-        <li class="nav-item">
-          <a class="nav-link" routerLink="/usuarios" routerLinkActive="active">
-            <i class="bi bi-people me-1"></i> Usuários & Cartões
-          </a>
-        </li>
+
+        <ng-container *ngIf="!authService.estaLogado()">
+          <li class="nav-item">
+            <a class="nav-link" routerLink="/login" routerLinkActive="active">
+              <i class="bi bi-box-arrow-in-right me-1"></i> Login
+            </a>
+          </li>
+          <li class="nav-item ms-lg-2">
+            <a
+              class="btn btn-outline-light btn-sm px-3 rounded-pill"
+              routerLink="/inscreva-se"
+            >
+              Inscreva-se
+            </a>
+          </li>
+        </ng-container>
+
+        <ng-container *ngIf="authService.estaLogado()">
+          <li class="nav-item" *ngIf="authService.getPerfil() === 'ADMIN'">
+            <a
+              class="nav-link"
+              routerLink="/usuarios"
+              routerLinkActive="active"
+            >
+              <i class="bi bi-people me-1"></i> Gestão de Usuários
+            </a>
+          </li>
+
+          <li class="nav-item ms-3 text-white-50 d-none d-lg-block">
+            <small>Olá, {{ authService.getNome() || "Usuário" }}</small>
+          </li>
+
+          <li class="nav-item ms-lg-3">
+            <button class="btn btn-link nav-link text-warning" (click)="sair()">
+              <i class="bi bi-power me-1"></i> Sair
+            </button>
+          </li>
+        </ng-container>
       </ul>
     </div>
   </div>

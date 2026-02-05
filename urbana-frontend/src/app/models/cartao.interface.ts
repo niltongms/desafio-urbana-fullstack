@@ -1,8 +1,9 @@
 export interface Cartao {
   id?: number;
-  numeroCartao: string;
+  numeroCartao?: string;
+  numero?: string;
   nome: string;
-  status: boolean;
+  status: boolean;     
   tipoCartao: 'COMUM' | 'ESTUDANTE' | 'TRABALHADOR';
   saldo: number;
   usuarioId: number;

@@ -1,15 +1,65 @@
-<div class="container py-5">
+<div class="container py-5 position-relative">
+  <div
+    class="position-absolute top-0 end-0 mt-4 me-3"
+    *ngIf="authService.estaLogado()"
+  >
+    <button
+      (click)="authService.logout()"
+      class="btn btn-outline-danger btn-sm shadow-sm"
+    >
+      <i class="bi bi-box-arrow-right me-2"></i>Sair
+    </button>
+  </div>
+
   <div class="row align-items-center g-5 py-5">
     <div class="col-lg-6">
       <h1 class="display-5 fw-bold lh-1 mb-3 text-secondary">
-        Gestão Inteligente de Transporte
+        Olá,
+        <span class="text-primary">{{
+          authService.getNome() || "Visitante"
+        }}</span
+        >!
       </h1>
+
       <p class="lead text-muted">
-        Bem-vindo ao sistema Urbana. Gerencie usuários, emita cartões de
-        transporte e controle saldos de forma simples, rápida e segura.
+        Bem-vindo ao sistema Urbana.
+        <br />
+        <ng-container *ngIf="authService.estaLogado()">
+          Seu perfil de acesso é:
+          <span
+            class="badge"
+            [ngClass]="
+              authService.getPerfil() === 'ADMIN' ? 'bg-danger' : 'bg-info'
+            "
+          >
+            {{ authService.getPerfil() }}
+          </span>
+        </ng-container>
+        <ng-container *ngIf="!authService.estaLogado()">
+          Gerencie seu transporte público de forma simples e rápida.
+        </ng-container>
       </p>
-      <div class="d-grid gap-2 d-md-flex justify-content-md-start">
-        <a routerLink="/usuarios" class="btn btn-primary btn-lg px-4 me-md-2">
+
+      <div
+        *ngIf="!authService.estaLogado()"
+        class="d-grid gap-2 d-md-flex justify-content-md-start mt-4"
+      >
+        <a routerLink="/login" class="btn btn-primary btn-lg px-4 me-md-2">
+          <i class="bi bi-box-arrow-in-right me-2"></i>Fazer Login
+        </a>
+        <a
+          routerLink="/inscreva-se"
+          class="btn btn-outline-secondary btn-lg px-4"
+        >
+          Inscreva-se
+        </a>
+      </div>
+
+      <div
+        *ngIf="authService.estaLogado() && authService.getPerfil() === 'ADMIN'"
+        class="d-grid gap-2 d-md-flex justify-content-md-start mt-4"
+      >
+        <a routerLink="/usuarios" class="btn btn-danger btn-lg px-4 me-md-2">
           <i class="bi bi-people-fill me-2"></i>Gerenciar Usuários
         </a>
         <a
@@ -19,9 +69,28 @@
           <i class="bi bi-person-plus me-2"></i>Novo Cadastro
         </a>
       </div>
+
+      <div
+        *ngIf="authService.estaLogado() && authService.getPerfil() !== 'ADMIN'"
+        class="mt-4"
+      >
+        <p class="text-muted mb-2">Acesse seus cartões e recargas abaixo:</p>
+        <a routerLink="/meus-cartoes" class="btn btn-success btn-lg px-4">
+          <i class="bi bi-card-checklist me-2"></i>Meus Cartões
+        </a>
+      </div>
     </div>
+
     <div class="col-lg-6 text-center">
-      <i class="bi bi-map text-primary" style="font-size: 10rem"></i>
+      <i
+        class="bi bi-map"
+        [ngClass]="{
+          'text-primary':
+            !authService.estaLogado() || authService.getPerfil() === 'ADMIN',
+          'text-info': authService.getPerfil() === 'USUARIO',
+        }"
+        style="font-size: 10rem"
+      ></i>
     </div>
   </div>
 

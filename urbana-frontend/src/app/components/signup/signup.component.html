@@ -1,0 +1,140 @@
+<div
+  class="container d-flex justify-content-center align-items-center py-5"
+  style="min-height: 90vh"
+>
+  <div class="card shadow-lg border-0" style="width: 100%; max-width: 500px">
+    <div class="card-body p-5">
+      <div class="text-center mb-4">
+        <h2 class="fw-bold" style="color: #ff5722">Crie sua Conta</h2>
+        <p class="text-muted small">
+          Junte-se ao Urbana e facilite seu transporte.
+        </p>
+      </div>
+
+      <div
+        *ngIf="mensagemSucesso"
+        class="alert alert-success text-center fw-bold shadow-sm animate__animated animate__fadeIn"
+      >
+        <i class="bi bi-check-circle-fill me-2"></i> {{ mensagemSucesso }}
+      </div>
+
+      <div
+        *ngIf="mensagemErro"
+        class="alert alert-danger text-center shadow-sm animate__animated animate__shakeX"
+      >
+        <i class="bi bi-exclamation-triangle-fill me-2"></i> {{ mensagemErro }}
+      </div>
+
+      <form (ngSubmit)="cadastrar()" #signupForm="ngForm">
+        <fieldset [disabled]="carregando || mensagemSucesso">
+          <div class="mb-3">
+            <label class="form-label fw-bold text-secondary small"
+              >Nome Completo</label
+            >
+            <div class="input-group">
+              <span class="input-group-text bg-light border-end-0"
+                ><i class="bi bi-person"></i
+              ></span>
+              <input
+                [(ngModel)]="usuario.nome"
+                name="nome"
+                type="text"
+                class="form-control border-start-0 ps-0 bg-light"
+                placeholder="Seu nome"
+                required
+              />
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label fw-bold text-secondary small">Email</label>
+            <div class="input-group">
+              <span class="input-group-text bg-light border-end-0"
+                ><i class="bi bi-envelope"></i
+              ></span>
+              <input
+                [(ngModel)]="usuario.email"
+                name="email"
+                type="email"
+                class="form-control border-start-0 ps-0 bg-light"
+                placeholder="seu@email.com"
+                required
+              />
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label class="form-label fw-bold text-secondary small">CPF</label>
+              <input
+                [(ngModel)]="usuario.cpf"
+                name="cpf"
+                type="text"
+                class="form-control bg-light"
+                placeholder="000.000.000-00"
+                required
+              />
+            </div>
+            <div class="col-md-6 mb-3">
+              <label class="form-label fw-bold text-secondary small"
+                >Nascimento</label
+              >
+              <input
+                [(ngModel)]="usuario.dataNascimento"
+                name="data"
+                type="date"
+                class="form-control bg-light"
+                required
+              />
+            </div>
+          </div>
+
+          <div class="mb-4">
+            <label class="form-label fw-bold text-secondary small">Senha</label>
+            <div class="input-group">
+              <span class="input-group-text bg-light border-end-0"
+                ><i class="bi bi-lock"></i
+              ></span>
+              <input
+                [(ngModel)]="usuario.senha"
+                name="senha"
+                type="password"
+                class="form-control border-start-0 ps-0 bg-light"
+                placeholder="Mínimo 6 caracteres"
+                required
+              />
+            </div>
+          </div>
+
+          <div class="d-grid gap-2">
+            <button
+              type="submit"
+              class="btn btn-lg text-white fw-bold shadow-sm"
+              [disabled]="signupForm.invalid || carregando"
+              style="background-color: #ff5722; border: none"
+            >
+              <span
+                *ngIf="carregando"
+                class="spinner-border spinner-border-sm me-2"
+              ></span>
+              {{ carregando ? "CRIANDO CONTA..." : "CADASTRAR AGORA" }}
+            </button>
+          </div>
+        </fieldset>
+      </form>
+
+      <div class="text-center mt-4 border-top pt-3" *ngIf="!mensagemSucesso">
+        <p class="text-muted small">
+          Já tem uma conta?
+          <a
+            [routerLink]="['/login']"
+            class="text-decoration-none fw-bold"
+            style="color: #ff5722; cursor: pointer"
+          >
+            Fazer Login
+          </a>
+        </p>
+      </div>
+    </div>
+  </div>
+</div>

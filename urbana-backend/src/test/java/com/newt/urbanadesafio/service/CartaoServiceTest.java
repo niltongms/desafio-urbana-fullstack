@@ -14,11 +14,13 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.math.BigDecimal;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class CartaoServiceTest {
@@ -33,32 +35,29 @@ class CartaoServiceTest {
     private CartaoService cartaoService;
 
     @Test
-    @DisplayName("Deve criar cartão para usuário existente")
+    @DisplayName("Deve criar cartão com número gerado automaticamente e saldo inicial")
     void deveCriarCartaoComSucesso() {
         // CENÁRIO
         Long usuarioId = 1L;
-
-        // Dados de entrada
         CartaoCreateDTO dto = new CartaoCreateDTO();
         dto.setUsuarioId(usuarioId);
-        dto.setNumeroCartao("12345");
-        dto.setNome("Cartão Estudante");
+        dto.setNome("Meu Cartão");
         dto.setTipoCartao(TipoCartao.ESTUDANTE);
+        dto.setSaldoInicial(new BigDecimal("50.00"));
 
-        // Usuário que o banco vai "encontrar"
         Usuario usuario = new Usuario();
         usuario.setId(usuarioId);
 
-        // Cartão que o banco vai "salvar"
-        Cartao cartaoSalvo = new Cartao();
-        cartaoSalvo.setId(10L);
-        cartaoSalvo.setNumeroCartao("12345");
-        cartaoSalvo.setUsuario(usuario);
-        cartaoSalvo.setTipoCartao(TipoCartao.ESTUDANTE);
-        cartaoSalvo.setStatus(true);
-
+        // Mock para garantir que o gerador de número único passe na verificação do banco
         when(usuarioRepository.findById(usuarioId)).thenReturn(Optional.of(usuario));
-        when(cartaoRepository.save(any(Cartao.class))).thenReturn(cartaoSalvo);
+        when(cartaoRepository.existsByNumeroCartao(anyString())).thenReturn(false);
+
+        // Mock do salvamento: capturamos o que o service gerou e retornamos
+        when(cartaoRepository.save(any(Cartao.class))).thenAnswer(invocation -> {
+            Cartao c = invocation.getArgument(0);
+            c.setId(10L); // Simula o ID gerado pelo banco
+            return c;
+        });
 
         // AÇÃO
         CartaoDTO resultado = cartaoService.criar(dto);
@@ -66,24 +65,55 @@ class CartaoServiceTest {
         // VERIFICAÇÃO
         assertNotNull(resultado);
         assertEquals(10L, resultado.getId());
-        assertEquals(12345L, resultado.getNumeroCartao());
+        assertEquals(new BigDecimal("50.00"), resultado.getSaldo());
         assertTrue(resultado.getStatus());
+        // Verifica se o prefixo do número gerado corresponde ao tipo ESTUDANTE (20)
+        assertTrue(resultado.getNumeroCartao().startsWith("20"));
+        verify(cartaoRepository, times(1)).save(any(Cartao.class));
     }
 
     @Test
-    @DisplayName("Deve falhar ao criar cartão sem usuário")
+    @DisplayName("Deve lançar exceção ao tentar criar cartão para usuário inexistente")
     void deveFalharAoCriarCartaoSemUsuario() {
-        //CENÁRIO
         CartaoCreateDTO dto = new CartaoCreateDTO();
         dto.setUsuarioId(99L);
 
         when(usuarioRepository.findById(99L)).thenReturn(Optional.empty());
 
-        // AÇÃO E VERIFICAÇÃO
-        RuntimeException ex = assertThrows(RuntimeException.class, () -> {
-            cartaoService.criar(dto);
-        });
-
+        RuntimeException ex = assertThrows(RuntimeException.class, () -> cartaoService.criar(dto));
         assertEquals("Usuário dono do cartão não encontrado!", ex.getMessage());
+    }
+
+    @Test
+    @DisplayName("Deve alterar status do cartão com sucesso")
+    void deveAlterarStatusCartao() {
+        // CENÁRIO
+        Long cartaoId = 10L;
+        Cartao cartao = new Cartao();
+        cartao.setId(cartaoId);
+        cartao.setStatus(true);
+        cartao.setSaldo(BigDecimal.ZERO);
+        cartao.setNumeroCartao("20123456");
+
+        when(cartaoRepository.findById(cartaoId)).thenReturn(Optional.of(cartao));
+        when(cartaoRepository.save(any(Cartao.class))).thenReturn(cartao);
+
+        // AÇÃO
+        CartaoDTO resultado = cartaoService.alterarStatus(cartaoId, false);
+
+        // VERIFICAÇÃO
+        assertFalse(resultado.getStatus());
+        verify(cartaoRepository).save(cartao);
+    }
+
+    @Test
+    @DisplayName("Deve lançar erro ao tentar deletar cartão que não existe")
+    void deveFalharAoDeletarCartaoInexistente() {
+        Long idInexistente = 500L;
+        when(cartaoRepository.existsById(idInexistente)).thenReturn(false);
+
+        RuntimeException ex = assertThrows(RuntimeException.class, () -> cartaoService.deletar(idInexistente));
+        assertEquals("Cartão não encontrado!", ex.getMessage());
+        verify(cartaoRepository, never()).deleteById(anyLong());
     }
 }
